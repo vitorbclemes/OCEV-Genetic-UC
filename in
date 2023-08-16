@@ -1,1 +1,3 @@
-cod=int-perm
+POP_SIZE=10
+DIM=15
+COD=BIN
