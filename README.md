@@ -3,14 +3,14 @@
 Projeto em desenvolvimento pela matéria de Computação Evolucionária na UDESC BCC 2023
 Linguagem utilizada: Python3
 
-Protocolo de execução:
+## Protocolo de execução:
 - (Primeira vez) chmod +x run.sh
 - ./run.sh
 
-Alteração de parâmetros:
+### Alteração de parâmetros:
 Modificar arquivo "in" na raiz do projeto. São aceitos valores em letras maiúsculas ou minusculas.
 
-Parâmetros codificados:
+### Parâmetros codificados:
 POP_SIZE = Tamanho da populacao (lI)
 DIM = Dimensão das variáveis (lI)
 COD = Modelo de Codificação (Opções: BIN, INT, INT-PERM, REAL)
