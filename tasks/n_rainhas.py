@@ -1,6 +1,15 @@
 import numpy as np
 import sys
-from genUtils import *
+from tasks.genUtils import *
+
+
+def min_fitness():
+    # TO-DO
+    pass
+
+def max_fitness():
+    # TO-DO
+    pass
 
 def check_for_collisions(individual):
     # Make a list of tuples with positions
