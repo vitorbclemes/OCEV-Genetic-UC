@@ -12,6 +12,5 @@ def fit_min(x):
 def fit_max(x):
     return f(x) - (-4)
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # 14 bits, sendo 4 para parte inteira e 10 para parte fracionária
-    bin_Size = 14
