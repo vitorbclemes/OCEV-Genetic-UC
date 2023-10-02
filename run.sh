@@ -10,6 +10,9 @@ echo "Problem:$PROBLEM"
 rm -f tests/$PROBLEM/*
 rm -f tests/$PROBLEM/*
 
+bash_script_pid=$$
+echo $bash_script_pid
+
 for ((i=1; i<$N+1; i++))
 do
     echo "------------"
@@ -18,7 +21,7 @@ do
     echo "Running solver..."
 
     # Chama o script Python com os argumentos.
-    python3 $PROBLEM.py $args
+    python3 $PROBLEM.py $args $bash_script_pid
 
     echo "Running graphs..."
     python3 results_interp.py $PROBLEM $i
