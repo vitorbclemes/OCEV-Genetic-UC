@@ -1,7 +1,7 @@
 import numpy as np
 from genUtils import *
 import time
-
+import math
 
 def check_for_collisions(individual):
     # Make a list of tuples with positions
@@ -31,15 +31,17 @@ if __name__ == "__main__":
     # Initial Pop
     population = generate_initial_population(POP_SIZE,DIM,COD)
     dinamic_mutation = MUTATION
+    count = 0
     for i in range(GEN):
         fit_evaluate = []
-
         for individual in population:
             fit_evaluate.append(min_fitness(DIM,individual))
+        #Eat elitism
+        if(ELITISM > 0):
+            best = population[fit_evaluate.index(max(fit_evaluate))]
         # Generate mid population
-        selectedIndexes = rouletteSelection(fit_evaluate,ELITISM)
+        selectedIndexes = rouletteSelection(fit_evaluate)
         mid_population = [population[k] for k in selectedIndexes]
-
         # Handle genetic operators
         new_generation = []
         for j in range(0,len(mid_population),2):
@@ -53,16 +55,23 @@ if __name__ == "__main__":
                     new_generation.append(mid_population[j+1])
         # Handle mutation operators
         for j in range(len(new_generation)):
-            new_generation[j] = swap_mutation(new_generation[j],dinamic_mutation)
+            if( np.random.rand() < dinamic_mutation ):
+                new_generation[j] = swap_mutation(new_generation[j])
+
+        # Vomit elitism
+        if(ELITISM > 0):
+            new_generation[np.random.randint(0,POP_SIZE)] = best
+
 
         population = new_generation
 
         new_generation_fit = []
         for individual in population:
-            new_generation_fit.append(min_fitness(individual))
+            new_generation_fit.append(min_fitness(DIM,individual))
         # Handle dinamic mutation
-        if(np.mean(new_generation_fit) - max(new_generation_fit) == 0):
-            dinamic_mutation +=0.1
+        
+        if((max(new_generation_fit) - np.mean(new_generation_fit)) < 0.01):
+            dinamic_mutation += 0.01
         else:
             dinamic_mutation = MUTATION
 
@@ -71,4 +80,14 @@ if __name__ == "__main__":
     end_time = time.time()
     elapsed_time = "{:.3f}".format(end_time - start_time)
     print(f"Elapsed time:{elapsed_time} seconds")
+
+    with open(f'./tests/nrainhas/best_fit_end.txt',"a") as best_fit_end_file:
+        best_fit_end_file.write(str(max(fit_evaluate)) + "\n")
+    with open(f'./tests/nrainhas/best_mean_end.txt',"a") as best_mean_end_file:
+        new_generation_fit = []
+        for individual in population:
+            new_generation_fit.append(min_fitness(DIM,individual))
+        best_mean_end_file.write(str(np.mean(new_generation_fit)) + "\n")
+    with open(f'./tests/nrainhas/time.txt',"a") as time_file:
+        time_file.write(str(elapsed_time) + "\n")
 

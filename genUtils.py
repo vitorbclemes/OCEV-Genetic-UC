@@ -41,18 +41,11 @@ def relative_fit(fit_evaluate):
     relative_fit_array = [fit/sum_fit for fit in fit_evaluate]
     return relative_fit_array
 
-def rouletteSelection(fit_evaluate, elitism_count=0):
+def rouletteSelection(fit_evaluate):
     rouletteOptions = relative_fit(fit_evaluate)
     roulettePairs = []
 
-    # Elitismo: seleciona os melhores indivíduos diretamente
-    elite_indices = np.argsort(fit_evaluate)[-elitism_count:]
-    roulettePairs.extend(elite_indices)
-
-    # Seleção por roleta para o restante da população
-    remaining_selections = len(fit_evaluate) - elitism_count
-
-    for _ in range(int(remaining_selections / 2)):
+    for _ in range(int(len(fit_evaluate) / 2)):
         rouletteOptionsCopy = rouletteOptions.copy()
         selected_indices = []
 
@@ -104,25 +97,25 @@ def bin_bitflip_mutation(individual,mutation_rate):
     return individual
 
 def pmx_crossover(parent1, parent2):
-    size = len(parent1)
-    child = [-1] * size
-    start, end = sorted(np.random.randint(size, size=2))
+    cutoff_1, cutoff_2 = np.sort(np.random.choice(np.arange(len(parent1)+1), size=2, replace=False))
 
-    # Copia a parte do pai1 para a criança
-    child[start:end] = parent1[start:end]
+    def PMX_one_offspring(p1, p2):
+        offspring = np.zeros(len(p1), dtype=p1.dtype)
 
-    # Mapeamento de índices
-    mapping = {parent1[i]: parent2[i] for i in range(start, end)}
+        # Copy the mapping section (middle) from parent1
+        offspring[cutoff_1:cutoff_2] = p1[cutoff_1:cutoff_2]
 
-    # Preenche os valores mapeados a partir do pai2
-    for i in range(size):
-        if child[i] == -1:
-            current = parent2[i]
-            while current in mapping:
-                current = mapping[current]
-            child[i] = current
+        # copy the rest from parent2 (provided it's not already there
+        for i in np.concatenate([np.arange(0,cutoff_1), np.arange(cutoff_2,len(p1))]):
+            candidate = p2[i]
+            while candidate in p1[cutoff_1:cutoff_2]: # allows for several successive mappings
+                candidate = p2[np.where(p1 == candidate)[0][0]]
+            offspring[i] = candidate
+        return offspring
 
-    return child
+    offspring1 = PMX_one_offspring(parent1, parent2)
+    offspring2 = PMX_one_offspring(parent2, parent1)
+    return offspring1, offspring2
 
 def swap_mutation(individual):
     size = len(individual)
@@ -136,24 +129,6 @@ def swap_mutation(individual):
 
     return mutated_individual
 
-def cycle_crossover(parent1, parent2):
-    size = len(parent1)
-    child1 = [-1] * size
-    child2 = [-1] * size
-    cycle_start = 0
-
-    while -1 in child1:
-        cycle_start = next(i for i, x in enumerate(child1) if x == -1)
-        while cycle_start not in child1:
-            child1[cycle_start] = parent1[cycle_start]
-            child2[cycle_start] = parent2[cycle_start]
-            cycle_start = parent1.index(parent2[cycle_start])
-
-        # Swap parents for the next cycle
-        child1, parent1 = parent1, child1
-        child2, parent2 = parent2, child2
-
-    return child1, child2
 
 def write_records(population,population_fit,problem_label):
     with open(f'./tests/{problem_label}/mean.txt',"a") as mean_file:

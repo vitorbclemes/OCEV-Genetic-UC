@@ -2,7 +2,7 @@
 N=10
 
 # Lê os valores do arquivo de entrada e remove os caracteres '\r'.
-args=$(awk -F'=' '{gsub(/\r/,"",$2); print $2}' in)
+args=$(awk -F'=' '{gsub(/\r/,"",$2); print $2}' in2)
 args_array=($args)
 PROBLEM="${args_array[-1]}"
 
@@ -11,7 +11,6 @@ rm -f tests/$PROBLEM/*
 rm -f tests/$PROBLEM/*
 
 bash_script_pid=$$
-echo $bash_script_pid
 
 for ((i=1; i<$N+1; i++))
 do
@@ -31,5 +30,8 @@ do
     rm -f tests/$PROBLEM/mean.txt*
     echo "Run $i done."
 done
+
+echo "Creating fitness boxplot..."
+python3 generate_boxplot.py $PROBLEM
 
 echo "DONE $N RUNS. Check tests/$PROBLEM/ for results"
