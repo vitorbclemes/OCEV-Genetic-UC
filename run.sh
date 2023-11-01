@@ -2,7 +2,7 @@
 N=10
 
 # Lê os valores do arquivo de entrada e remove os caracteres '\r'.
-args=$(awk -F'=' '{gsub(/\r/,"",$2); print $2}' in2)
+args=$(awk -F'=' '{gsub(/\r/,"",$2); print $2}' in)
 args_array=($args)
 PROBLEM="${args_array[-1]}"
 

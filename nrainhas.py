@@ -74,7 +74,7 @@ if __name__ == "__main__":
             dinamic_mutation += 0.01
         else:
             dinamic_mutation = MUTATION
-
+        print(dinamic_mutation)
         write_records(population,new_generation_fit,'nrainhas')
 
     end_time = time.time()
