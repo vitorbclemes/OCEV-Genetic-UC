@@ -142,3 +142,28 @@ def write_records(population,population_fit,problem_label):
     mean_file.close()
     best_fit_file.close()
     # best_individual_file.close()
+
+def real_mutation(crom, mutation_rate):
+    for i in range(len(crom)):
+        if random.random() < mutation_rate:
+            # Escolha um gene aleatório para mutação
+            crom[i] = random.uniform(0, 0.9999)
+    return crom
+
+def real_crossover(p1, p2, cross_rate, mutation_rate):
+    if random.random() < cross_rate:
+        # Escolher um ponto de corte aleatório
+        cut_point = random.randint(1, len(p1) - 1)
+
+        # Realizar a recombinação dos cromossomos
+        first_child = p1[:cut_point] + p2[cut_point:]
+        second_child = p2[:cut_point] + p1[cut_point:]
+
+        # Aplicar mutação nos filhos
+        first_child = real_mutation(first_child, mutation_rate)
+        second_child = real_mutation(second_child, mutation_rate)
+
+        return first_child,second_child
+
+    else:
+        return p1, p2
